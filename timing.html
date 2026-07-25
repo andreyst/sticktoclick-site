@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What does “on the click” mean? — StickToClick</title>
+<meta name="description" content="How to interpret early and late drum hits, millisecond timing windows, perceptible offsets, latency calibration and groove in StickToClick.">
+<meta property="og:title" content="What does “on the click” mean?">
+<meta property="og:description" content="A research-grounded guide to interpreting drum timing in milliseconds.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://sticktoclick.com/timing.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%23151a26'/%3E%3Ccircle cx='32' cy='17' r='6' fill='%23ff9429'/%3E%3Crect x='12' y='30' width='40' height='5' rx='2.5' fill='%23e8eaf0' transform='rotate(28 32 38)'/%3E%3Crect x='12' y='30' width='40' height='5' rx='2.5' fill='%23e8eaf0' transform='rotate(-28 32 38)'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #12151d;
+    --edge: #232838;
+    --text: #e8eaf0;
+    --dim: #9aa1b2;
+    --accent: #ff9429;
+    --accent-soft: rgba(255, 148, 41, 0.14);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 0;
+  }
+  .mark { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font-weight: 700; letter-spacing: -0.01em; }
+  .mark svg { display: block; }
+  nav a { color: var(--dim); text-decoration: none; margin-left: 22px; font-size: 15px; }
+  nav a:hover { color: var(--text); }
+  nav a.buy { color: var(--bg); background: var(--accent); padding: 8px 16px; border-radius: 999px; font-weight: 600; }
+  main { max-width: 760px; margin: 0 auto; padding: 68px 0 0; }
+  .eyebrow { color: var(--accent); font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  h1 { margin-top: 10px; font-size: clamp(40px, 7vw, 62px); line-height: 1.06; letter-spacing: -0.035em; }
+  .intro { margin-top: 22px; color: var(--dim); font-size: 21px; line-height: 1.55; }
+  .meta { margin-top: 18px; color: var(--dim); font-size: 14px; }
+  article { padding-top: 54px; }
+  article h2 { margin: 54px 0 12px; font-size: 29px; line-height: 1.2; letter-spacing: -0.02em; }
+  article h3 { margin: 30px 0 8px; font-size: 19px; }
+  article p { margin: 14px 0; }
+  article strong { color: #fff; }
+  .callout {
+    margin: 34px 0; padding: 24px;
+    background: linear-gradient(180deg, var(--accent-soft), transparent 90%), var(--panel);
+    border: 1px solid var(--edge); border-radius: 15px;
+  }
+  .callout p:first-child { margin-top: 0; }
+  .callout p:last-child { margin-bottom: 0; }
+  .windows { display: grid; gap: 14px; margin: 26px 0; }
+  .window { background: var(--panel); border: 1px solid var(--edge); border-radius: 14px; padding: 20px; }
+  .window h3 { margin: 0 0 6px; display: flex; justify-content: space-between; gap: 18px; }
+  .window h3 span { color: var(--accent); white-space: nowrap; }
+  .window p { color: var(--dim); margin: 0; font-size: 15px; }
+  .example { border-left: 3px solid var(--accent); padding: 2px 0 2px 18px; margin: 22px 0; color: var(--dim); }
+  .sources { margin-top: 24px; padding-left: 22px; color: var(--dim); font-size: 15px; }
+  .sources li { margin: 12px 0; }
+  .sources a { overflow-wrap: anywhere; }
+  .article-cta { margin-top: 58px; padding: 28px; text-align: center; background: var(--panel); border: 1px solid var(--edge); border-radius: 16px; }
+  .article-cta p { color: var(--dim); margin: 7px auto 20px; max-width: 520px; }
+  .btn { display: inline-block; text-decoration: none; font-weight: 650; padding: 13px 24px; border-radius: 12px; background: var(--accent); color: #1a0f02; }
+  footer {
+    margin-top: 96px; padding: 28px 0 44px; border-top: 1px solid var(--edge);
+    color: var(--dim); font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  footer a { color: var(--dim); }
+  @media (max-width: 640px) {
+    nav a:not(.buy) { display: none; }
+    main { padding-top: 44px; }
+    .window h3 { display: block; }
+    .window h3 span { display: block; margin-top: 3px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="mark" href="/">
+    <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="4" y="4" width="56" height="56" rx="14" fill="#151a26"/>
+      <circle cx="32" cy="17" r="6" fill="#ff9429"/>
+      <rect x="12" y="34" width="40" height="5" rx="2.5" fill="#e8eaf0" transform="rotate(28 32 36)"/>
+      <rect x="12" y="34" width="40" height="5" rx="2.5" fill="#e8eaf0" transform="rotate(-28 32 36)"/>
+    </svg>
+    StickToClick
+  </a>
+  <nav>
+    <a href="/#features">Features</a>
+    <a href="/#buy">Pricing</a>
+    <a class="buy" href="/#buy">Get it free</a>
+  </nav>
+</header>
+
+<main>
+  <div class="eyebrow">Timing guide</div>
+  <h1>What does “on the click” actually mean?</h1>
+  <p class="intro">A hit can be measurable without being obviously audible. It can also be consistently early, consistently late, or simply inconsistent. Here is how to read the milliseconds without mistaking a number for the music.</p>
+  <p class="meta">Updated July 2026 · About 7 minutes</p>
+
+  <article>
+    <div class="callout">
+      <p><strong>The practical answer:</strong> there is no universal millisecond boundary between “tight” and “bad.” In a drum groove, deviations around 20–30 ms are an important transition region: small enough to feel close, but large enough to affect the result or become noticeable in the right context.</p>
+      <p>StickToClick therefore treats <strong>±25 ms as tight</strong>, <strong>±40 ms as normal practice timing</strong>, and <strong>±60 ms as loose</strong>. Those are useful training windows informed by timing research—not laws of hearing.</p>
+    </div>
+
+    <h2>Zero milliseconds is not the only good result</h2>
+    <p>When people synchronise movements to a metronome, they do not produce identical offsets on every beat. Research on sensorimotor synchronisation repeatedly finds both small systematic biases and beat-to-beat variation. Performers may also anticipate a click slightly rather than land exactly after its acoustic onset.</p>
+    <p>That means a single hit at −8 ms is not evidence that you rushed, and a single hit at +12 ms is not evidence that you dragged. The useful question is whether a pattern develops across the take.</p>
+
+    <h2>What the timing number measures</h2>
+    <p>StickToClick compares the timestamp of the MIDI hit with the expected onset in the score. A negative value is early; a positive value is late. Before scoring, the app applies the latency correction measured for your kit, so the number is intended to describe your playing rather than the fixed delay in the hardware path.</p>
+    <div class="example"><strong>Example:</strong> after calibration, −17 ms means the stroke arrived 17 milliseconds before the expected note. It does not mean your kit has 17 ms of latency.</div>
+    <p>Calibration matters because electronic kits, USB interfaces and audio devices do not all report events at the same point in their signal path. Bluetooth and AirPlay add variable output latency and clock behaviour, so a wired audio path is the reliable choice for millisecond practice.</p>
+
+    <h2>How to interpret the three windows</h2>
+    <div class="windows">
+      <div class="window">
+        <h3>Tight <span>±25 ms</span></h3>
+        <p>A demanding click-lock target. Small deviations can still shape feel, but hits inside this window are close enough that many will not stand out as discrete timing errors in a full groove.</p>
+      </div>
+      <div class="window">
+        <h3>Normal <span>±40 ms</span></h3>
+        <p>A practical everyday training window. Hits near its edge may sound or feel loose—especially on exposed snare and hi-hat parts—but the window is useful while building control.</p>
+      </div>
+      <div class="window">
+        <h3>Loose <span>±60 ms</span></h3>
+        <p>A learning and note-placement window. It helps distinguish the intended note from a clear miss without pretending that every accepted hit is perceptually locked to the click.</p>
+      </div>
+    </div>
+    <p>The wider <em>match window</em> used internally is different. It lets the app decide which notated note a hit belongs to. A hit can be matched correctly and still be labelled early or late.</p>
+
+    <h2>Perceptible is not the same as unacceptable</h2>
+    <p>Perception changes with the instrument, sound envelope, tempo, subdivision, arrangement and listener. Percussive sounds have sharp attacks, so their relative timing is exposed. Dense backing tracks can mask small differences; isolated click-and-pad practice reveals them.</p>
+    <p>In a controlled drum-pattern study, perfectly quantised versions received the strongest groove-quality ratings, while imposed microtiming deviations of 15 and 25 ms reduced ratings as the displacement increased. Early shifts were generally judged more harshly than equivalent late shifts, and the affected drum voice also mattered.</p>
+    <p>That is why StickToClick uses symmetrical windows for clarity, but still shows the signed offset. The verdict tells you whether a hit met the selected training target; the sign tells you which way your timing is leaning.</p>
+
+    <h2>Read the take, not just the hit</h2>
+    <h3>1. Accuracy</h3>
+    <p>How many expected notes fell inside the selected correct window? This is the simplest progress measure, but it does not explain the shape of the errors.</p>
+    <h3>2. Direction</h3>
+    <p>Are most non-correct hits early or late? A stable bias is different from random scatter. Ten hits around −28 ms suggest a repeatable rushing tendency; alternating between −55 and +55 ms suggests inconsistency.</p>
+    <h3>3. Consistency</h3>
+    <p>A drummer whose hits cluster closely around +12 ms is often more controlled than one whose average is 0 ms only because large early and late errors cancel out. Tightness is fundamentally about spread as well as average position.</p>
+    <h3>4. Musical location</h3>
+    <p>Look for repeated trouble on a limb, drum, subdivision or transition. A late kick after a fill is more actionable than an isolated late hit somewhere in a long take.</p>
+
+    <h2>Four concrete examples</h2>
+    <p><strong>−6 ms:</strong> effectively locked for ordinary practice. Do not chase zero at the expense of relaxed playing.</p>
+    <p><strong>+23 ms:</strong> inside Tight, near the edge. Worth watching only if many similar hits form a pattern.</p>
+    <p><strong>−37 ms:</strong> correct on Normal but early on Tight. This may be audible in exposed material and is a useful improvement target.</p>
+    <p><strong>+82 ms:</strong> clearly late for click-based playing. It may still be associated with the intended note by the wider match window, which is why the app can show a meaningful “late” verdict instead of calling it an unrelated extra hit.</p>
+
+    <h2>What the research does—and does not—justify</h2>
+    <p>The literature supports measuring both average asynchrony and variability, recognises that musicians often anticipate metronome events slightly, and shows that small drum microtiming changes can alter perceived groove. It does <strong>not</strong> establish one universal pass mark for every drummer, tempo, style and mix.</p>
+    <p>The StickToClick windows are therefore an engineering and teaching interpretation of the evidence. Tight is intentionally demanding; Normal is intentionally useful; Loose is intentionally forgiving. Change the level as your purpose changes.</p>
+
+    <h2>Sources</h2>
+    <ol class="sources">
+      <li>Frühauf, J., Kopiez, R. &amp; Platz, F. (2013). “Music on the timing grid: The influence of microtiming on the perceived groove quality of a simple drum pattern performance.” <em>Musicae Scientiae, 17</em>(2), 246–260. <a href="https://doi.org/10.1177/1029864913486793" rel="noopener">doi:10.1177/1029864913486793</a></li>
+      <li>Repp, B. H. (2005). “Sensorimotor synchronization: A review of the tapping literature.” <em>Psychonomic Bulletin &amp; Review, 12</em>, 969–992. <a href="https://doi.org/10.3758/BF03206433" rel="noopener">doi:10.3758/BF03206433</a></li>
+      <li>Repp, B. H. &amp; Su, Y.-H. (2013). “Sensorimotor synchronization: A review of recent research (2006–2012).” <em>Psychonomic Bulletin &amp; Review, 20</em>, 403–452. <a href="https://doi.org/10.3758/s13423-012-0371-2" rel="noopener">doi:10.3758/s13423-012-0371-2</a></li>
+    </ol>
+
+    <div class="article-cta">
+      <h2>Put the milliseconds on the score</h2>
+      <p>StickToClick scores every expected drum note against your chart, with latency calibration and Tight, Normal or Loose timing.</p>
+      <a class="btn" href="/#buy">Get StickToClick free — for macOS</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <div>© 2026 Andrey Stolbovsky · Made with 💚 to V</div>
+  <div>
+    <a href="/">Home</a> ·
+    <a href="/privacy.html">Privacy</a> ·
+    <a href="mailto:hello@sticktoclick.com">Contact</a>
+  </div>
+</footer>
+</div>
+</body>
+</html>

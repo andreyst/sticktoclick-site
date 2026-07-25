@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What's new — StickToClick</title>
+<meta name="description" content="Release notes for StickToClick — every build, what changed and why it matters.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%23151a26'/%3E%3Ccircle cx='32' cy='17' r='6' fill='%23ff9429'/%3E%3Crect x='12' y='30' width='40' height='5' rx='2.5' fill='%23e8eaf0' transform='rotate(28 32 38)'/%3E%3Crect x='12' y='30' width='40' height='5' rx='2.5' fill='%23e8eaf0' transform='rotate(-28 32 38)'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #12151d;
+    --edge: #232838;
+    --text: #e8eaf0;
+    --dim: #9aa1b2;
+    --accent: #ff9429;
+    --accent-soft: rgba(255, 148, 41, 0.14);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 0;
+  }
+  .mark { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; }
+  .mark a { color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+  nav a { color: var(--dim); text-decoration: none; margin-left: 22px; font-size: 15px; }
+  nav a:hover { color: var(--text); }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 44px); line-height: 1.1;
+    letter-spacing: -0.02em; font-weight: 800;
+    padding: 44px 0 8px;
+  }
+  .lede { color: var(--dim); margin-bottom: 40px; }
+
+  .release {
+    border-left: 2px solid var(--edge);
+    padding: 0 0 36px 26px;
+    position: relative;
+  }
+  .release::before {
+    content: ""; position: absolute; left: -6px; top: 8px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .release h2 { font-size: 22px; letter-spacing: -0.01em; }
+  .release .date { color: var(--dim); font-size: 14px; margin-bottom: 14px; }
+  .release .batch {
+    color: var(--dim); font-size: 13px; font-weight: 650;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin: 18px 0 4px;
+  }
+  .release ul { list-style: none; }
+  .release li {
+    padding: 5px 0 5px 22px; position: relative; color: var(--text);
+  }
+  .release li::before {
+    content: ""; position: absolute; left: 4px; top: 15px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-soft); border: 1.5px solid var(--accent);
+  }
+  .release li b { font-weight: 650; }
+
+  footer {
+    border-top: 1px solid var(--edge);
+    margin-top: 24px; padding: 26px 0 48px;
+    color: var(--dim); font-size: 14px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  footer a { color: var(--dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="mark">
+    <a href="index.html">
+    <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="4" y="4" width="56" height="56" rx="14" fill="#151a26"/>
+      <circle cx="32" cy="15" r="6" fill="#ff9429"/>
+      <rect x="12" y="34" width="40" height="5" rx="2.5" fill="#e8eaf0" transform="rotate(28 32 36)"/>
+      <rect x="12" y="34" width="40" height="5" rx="2.5" fill="#e8eaf0" transform="rotate(-28 32 36)"/>
+    </svg>
+    StickToClick
+    </a>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="timing.html">Timing science</a>
+    <a href="privacy.html">Privacy</a>
+  </nav>
+</header>
+
+<h1>What's new</h1>
+<p class="lede">Every version of StickToClick, newest first.</p>
+
+<div class="release">
+  <h2>Version 1.0</h2>
+  <div class="date">July 17, 2026</div>
+  <ul>
+    <li><b>The first release.</b> Import a MusicXML drum chart, see it beautifully engraved, play it against the click on your e-kit — and watch every hit get judged on the notation: correct, early, late, missed, extra.</li>
+    <li><b>Two built-in courses</b> to learn from scratch: Note Durations and Drum Notation.</li>
+    <li><b>Backing tracks</b> with automatic tempo detection, so you can practice inside the real recording.</li>
+    <li><b>Practice history</b> with take-by-take results, timing statistics, and replay.</li>
+    <li><b>Optional, anonymous usage analytics</b> — counts and settings only, never titles, file names, or anything personal — to help us see which features matter. One switch in Settings → Privacy turns it off.</li>
+  </ul>
+</div>
+
+<footer>
+  <div>© 2026 Andrey Stolbovsky</div>
+  <div>
+    <a href="index.html">Home</a> ·
+    <a href="privacy.html">Privacy</a> ·
+    <a href="mailto:hello@sticktoclick.com">Contact</a>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StickToClick — drum practice that scores every hit</title>
+<meta name="description" content="Research-grounded drum practice for e-kits on macOS: play your charts against the click and see every hit judged on real notation. Free.">
+<meta property="og:title" content="StickToClick">
+<meta property="og:description" content="Research-grounded drum practice that scores every hit — on real notation. Free.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sticktoclick.com">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='14' fill='%23151a26'/%3E%3Ccircle cx='32' cy='17' r='6' fill='%23ff9429'/%3E%3Crect x='12' y='30' width='40' height='5' rx='2.5' fill='%23e8eaf0' transform='rotate(28 32 38)'/%3E%3Crect x='12' y='30' width='40' height='5' rx='2.5' fill='%23e8eaf0' transform='rotate(-28 32 38)'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #12151d;
+    --edge: #232838;
+    --text: #e8eaf0;
+    --dim: #9aa1b2;
+    --accent: #ff9429;
+    --accent-soft: rgba(255, 148, 41, 0.14);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 0;
+  }
+  .mark { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.01em; }
+  .mark svg { display: block; }
+  nav a {
+    color: var(--dim); text-decoration: none; margin-left: 22px; font-size: 15px;
+  }
+  nav a:hover { color: var(--text); }
+  nav a.buy {
+    color: var(--bg); background: var(--accent);
+    padding: 8px 16px; border-radius: 999px; font-weight: 600;
+  }
+
+  /* Hero */
+  .hero { padding: 72px 0 40px; text-align: center; position: relative; }
+  .hero::before {
+    content: ""; position: absolute; inset: -140px 0 auto;
+    height: 480px; z-index: -1;
+    background: radial-gradient(600px 320px at 50% 0%, rgba(255,148,41,0.10), transparent 70%);
+  }
+  .beat {
+    display: inline-flex; gap: 9px; margin-bottom: 26px; align-items: center;
+  }
+  .beat i {
+    width: 9px; height: 9px; border-radius: 50%; background: var(--edge);
+    animation: tick 2s infinite;
+  }
+  .beat i:nth-child(1) { animation-delay: 0s; }
+  .beat i:nth-child(2) { animation-delay: .5s; }
+  .beat i:nth-child(3) { animation-delay: 1s; }
+  .beat i:nth-child(4) { animation-delay: 1.5s; }
+  @keyframes tick {
+    0%, 12% { background: var(--accent); transform: scale(1.35); }
+    18%, 100% { background: var(--edge); transform: scale(1); }
+  }
+  h1 {
+    font-size: clamp(40px, 7vw, 64px); line-height: 1.05;
+    letter-spacing: -0.03em; font-weight: 800;
+  }
+  .hero p.sub {
+    margin: 20px auto 0; max-width: 620px; color: var(--dim); font-size: 20px;
+  }
+  .cta { margin-top: 34px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; text-decoration: none; font-weight: 650;
+    padding: 14px 26px; border-radius: 12px; font-size: 17px;
+  }
+  .btn.primary { background: var(--accent); color: #1a0f02; }
+  .btn.primary:hover { filter: brightness(1.07); }
+  .btn .btn-sub {
+    display: block; font-size: 12px; font-weight: 600; opacity: 0.72;
+    margin-top: 2px; letter-spacing: 0.01em;
+  }
+  .btn.soon { color: var(--dim); border: 1px dashed var(--edge); cursor: default; }
+  .cta .btn { display: inline-flex; flex-direction: column; justify-content: center; text-align: center; }
+  .cta .store-badge { display: inline-flex; align-items: center; }
+  .cta .store-badge img { display: block; height: 52px; width: auto; }
+  .btn.ghost { color: var(--text); border: 1px solid var(--edge); }
+  .btn.ghost:hover { border-color: var(--dim); }
+  .fine { margin-top: 14px; color: var(--dim); font-size: 14px; }
+
+  /* Screenshot frames */
+  .shot {
+    margin: 56px auto 0; max-width: 980px;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--edge);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    background: var(--panel);
+  }
+  .shot img { display: block; width: 100%; height: auto; }
+  .caption { color: var(--dim); font-size: 14px; margin-top: 12px; text-align: center; }
+
+  /* Features */
+  section { padding: 84px 0 0; }
+  h2 { font-size: 30px; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .lede { color: var(--dim); max-width: 620px; }
+  .demo { margin: 28px 0 8px; }
+  .demo video { display: block; width: 100%; max-width: 980px; border-radius: 12px;
+                border: 1px solid var(--edge); box-shadow: 0 18px 48px rgba(0,0,0,.45); }
+  .demo figcaption { color: var(--dim); font-size: 14px; margin-top: 10px; }
+  .grid3 {
+    margin-top: 36px; display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--edge);
+    border-radius: 14px; padding: 22px;
+  }
+  .card h3 { font-size: 17px; margin-bottom: 6px; display: flex; align-items: center; gap: 9px; }
+  .card h3 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+  .card p { color: var(--dim); font-size: 15px; }
+  .card a { color: var(--accent); text-decoration: none; }
+  .card a:hover { text-decoration: underline; }
+
+  .duo { margin-top: 40px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .duo figure { margin: 0; }
+  .duo .shot { margin: 0; }
+
+  /* Research */
+  .sciencebox {
+    padding: 30px;
+    display: flex; align-items: center; justify-content: space-between; gap: 28px;
+    background: linear-gradient(120deg, var(--accent-soft), transparent 65%), var(--panel);
+    border: 1px solid var(--edge); border-radius: 16px;
+  }
+  .sciencebox .copy { max-width: 680px; }
+  .sciencebox p { color: var(--dim); }
+  .sciencebox .btn { white-space: nowrap; }
+
+  /* Buy */
+  .buybox {
+    margin-top: 40px;
+    display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    align-items: stretch;
+  }
+  .price {
+    background: linear-gradient(180deg, var(--accent-soft), transparent 65%), var(--panel);
+    border: 1px solid var(--edge); border-radius: 16px; padding: 28px;
+    display: flex; flex-direction: column;
+  }
+  .price .amount { font-size: 46px; font-weight: 800; letter-spacing: -0.02em; }
+  .price .amount small { font-size: 17px; color: var(--dim); font-weight: 500; }
+  .price ul { list-style: none; margin: 18px 0 26px; }
+  .price li { padding: 5px 0 5px 26px; position: relative; color: var(--dim); font-size: 15px; }
+  .price li::before { content: "✓"; position: absolute; left: 2px; color: var(--accent); }
+  .price .btn { text-align: center; margin-top: auto; }
+  .faq h3 { font-size: 16px; margin: 18px 0 4px; }
+  .faq p { color: var(--dim); font-size: 15px; }
+
+  footer {
+    margin-top: 96px; padding: 28px 0 44px;
+    border-top: 1px solid var(--edge);
+    color: var(--dim); font-size: 14px;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  footer a { color: var(--dim); }
+  @media (max-width: 760px) {
+    .sciencebox { align-items: flex-start; flex-direction: column; }
+  }
+  @media (max-width: 640px) {
+    nav a:not(.buy) { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="mark">
+    <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="4" y="4" width="56" height="56" rx="14" fill="#151a26"/>
+      <circle cx="32" cy="17" r="6" fill="#ff9429"/>
+      <rect x="12" y="34" width="40" height="5" rx="2.5" fill="#e8eaf0" transform="rotate(28 32 36)"/>
+      <rect x="12" y="34" width="40" height="5" rx="2.5" fill="#e8eaf0" transform="rotate(-28 32 36)"/>
+    </svg>
+    StickToClick
+  </div>
+  <nav>
+    <a href="#features">Features</a>
+    <a href="timing.html">Timing science</a>
+    <a href="#buy">Pricing</a>
+    <a class="buy" href="#buy">Get it free</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="beat" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <h1>For those who take music seriously.</h1>
+  <p class="sub">Plug in your e-kit, open your chart, play against the click.
+  Research-grounded timing windows score each note — on the notation itself.</p>
+  <div class="cta">
+    <!-- On App Store release: swap the two "soon" chips back to the badge,
+         pointed at the store page:
+    <a class="store-badge" href="#buy" aria-label="Download on the Mac App Store"><img
+      src="assets/mac-app-store-badge.svg" alt="Download on the Mac App Store"></a>
+    -->
+    <span class="btn soon">Mac<span class="btn-sub">coming really soon</span></span>
+    <span class="btn soon">iPhone &amp; iPad<span class="btn-sub">coming really soon</span></span>
+    <a class="btn ghost" href="#features">See how it works</a>
+  </div>
+  <p class="fine">Free · Latency-calibrated · No subscription.</p>
+</div>
+
+<section id="features">
+  <h2>Practice that answers back</h2>
+  <p class="lede">A metronome tells you the time. StickToClick tells you what you actually played.</p>
+  <figure class="demo">
+    <video autoplay muted loop playsinline preload="metadata"
+           poster="assets/demo-poster.jpg" aria-label="A practice take in StickToClick: hits judged live on the notation, two misses marked in red, then the results screen with the timing breakdown">
+      <source src="assets/demo.mp4" type="video/mp4">
+    </video>
+    <figcaption>A real take: every hit judged live on the notation — greens on time, a couple of misses in red — then the verdict.</figcaption>
+  </figure>
+  <div class="grid3">
+    <div class="card">
+      <h3><span class="dot"></span>Real notation</h3>
+      <p>Your charts, engraved properly — import MusicXML from MuseScore, Guitar&nbsp;Pro or Sibelius. Repeats can be shown written out, exactly as they play.</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>Timing you can interpret</h3>
+      <p>Correct, early, late, missed, wrong drum — with Tight ±25 ms, Normal ±40 ms and Loose ±60 ms windows. <a href="timing.html">See why those numbers matter.</a></p>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>Built for e-kits</h3>
+      <p>Any MIDI kit. Pad test, per-kit mapping, and latency calibration so the scoring clock matches what you hear.</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>Focused loops</h3>
+      <p>Pick bars 12–15, set repetitions, ramp the tempo. The count-in handles pickup bars like a drummer would.</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>Streaks &amp; live stats</h3>
+      <p>An optional overlay counts your verdicts and streaks as you play — and drops the dots on the score in real time.</p>
+    </div>
+    <div class="card">
+      <h3><span class="dot"></span>Takes that teach</h3>
+      <p>Every take is saved: replay what you played against the reference, loop the rough spots, watch accuracy climb over time.</p>
+    </div>
+  </div>
+</section>
+
+<section id="science">
+  <div class="sciencebox">
+    <div class="copy">
+      <h2>Timing feedback, grounded in research</h2>
+      <p>There is no magic millisecond that separates good from bad. StickToClick turns research on synchronisation, perception and groove into practical training levels, then calibrates out the fixed latency of your kit.</p>
+    </div>
+    <a class="btn ghost" href="timing.html">Read the timing guide</a>
+  </div>
+</section>
+
+<section id="buy">
+  <h2>Free</h2>
+  <p class="lede">The full app, free. No credit card, no catch.</p>
+  <div class="buybox">
+    <div class="price">
+      <div class="amount">Free</div>
+      <ul>
+        <li>Full app for macOS 14+</li>
+        <li>All updates included</li>
+        <li>Unlimited tracks and takes</li>
+        <li>No account, no subscription</li>
+        <li>Coming really soon to Mac, iPhone &amp; iPad</li>
+      </ul>
+      <a class="btn primary" href="mailto:hello@sticktoclick.com?subject=StickToClick%20—%20early%20access">Get StickToClick free</a>
+    </div>
+    <div class="faq">
+      <h3>Which drum kits work?</h3>
+      <p>Any electronic kit with MIDI out — USB or through an interface. Roland TD-series mapping is built in; everything else maps in a minute.</p>
+      <h3>Where do charts come from?</h3>
+      <p>MusicXML — the export every notation app has: MuseScore (free), Guitar Pro, Sibelius, Dorico.</p>
+      <h3>Is it really free?</h3>
+      <p>Yes. No subscription, no trial timer.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 Andrey Stolbovsky · Made with 💚 to V</div>
+  <div>
+    <a href="timing.html">Timing guide</a> ·
+    Engraving by <a href="https://www.verovio.org" rel="noopener">Verovio</a> ·
+    Sounds from <a href="https://github.com/mrbumpy409/GeneralUser-GS" rel="noopener">GeneralUser&nbsp;GS</a> ·
+    <a href="privacy.html">Privacy</a> ·
+    <a href="mailto:hello@sticktoclick.com">Contact</a>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>
